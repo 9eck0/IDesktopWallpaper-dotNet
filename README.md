@@ -1,5 +1,5 @@
 # IDesktopWallpaper-dotNet
-A fully-functional C# wrapper around Win32 API's IDesktopWallpaper interface.
+A fully-functional C# wrapper around Win32 API's [IDesktopWallpaper](https://docs.microsoft.com/en-us/windows/win32/api/shobjidl_core/nn-shobjidl_core-idesktopwallpaper) interface.
 
 IDesktopWallpaper is a COM interface introduced in Windows 8 as part of the Win32 API, permitting better control of desktop wallpapers on a multi-monitor system.
 
