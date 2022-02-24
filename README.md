@@ -8,7 +8,7 @@ To start, instantiate a DesktopWallpaper class, which is the wrapper class aroun
 
 All functionalities related to the scope of wallpaper and slideshow manipulations are available, to the extent provided by IDesktopWallpaper's associated coclass implementation.
 The coclass implementation of [AdvanceSlideshow](https://docs.microsoft.com/en-us/windows/win32/api/shobjidl_core/nf-shobjidl_core-idesktopwallpaper-advanceslideshow) method has been restricted in functionality, not being able to specify a particular monitor, nor advancing backwards in direction.<br/>
-More implementation restrictions suci as this one are possible, depending on the version of Windows this is run on.
+More implementation restrictions such as this one are possible, depending on the version of Windows this is run on.
 
 # TODO
 - making this repo more presentable after this initial creation phase
