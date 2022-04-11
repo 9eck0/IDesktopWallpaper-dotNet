@@ -6,15 +6,22 @@ using System.Runtime.InteropServices;
 
 namespace IDesktopWallpaperWrapper
 {
+    [ComVisible(true)]
     public class DesktopWallpaper
     {
         private Guid IDesktopWallpaperCoclassClsID = new Guid("c2cf3110-460e-4fc1-b9d0-8a1c0c9cc4bd");
         private IDesktopWallpaper wallpaperEngine;
 
+        /// <summary>
+        /// Instantiates the Windows desktop wallpaper engine.
+        /// </summary>
+        /// <remarks>
+        /// This constructor calls the native (unmanaged) IDesktopWallpaper COM interface to obtain an instance of the coclass implementing said interface.
+        /// </remarks>
         public DesktopWallpaper()
         {
             Type typeIDesktopWallpaper = Type.GetTypeFromCLSID(IDesktopWallpaperCoclassClsID);
-            wallpaperEngine = (Win32.IDesktopWallpaper)Activator.CreateInstance(typeIDesktopWallpaper);
+            wallpaperEngine = (IDesktopWallpaper)Activator.CreateInstance(typeIDesktopWallpaper);
         }
 
         #region IDESKTOPWALLPAPER MONITOR METHODS
@@ -104,12 +111,12 @@ namespace IDesktopWallpaperWrapper
         /// <returns>The color of the background. If this method fails, returns Color.Empty</returns>
         public Color GetBackgroundColor()
         {
-            COLORREF rawColor = wallpaperEngine.GetBackgroundColor();
-            if (rawColor.ColorDWORD == 0)
+            uint colorref = wallpaperEngine.GetBackgroundColor();
+            if (colorref == 0xffffffff)
             {
                 return Color.Empty;
             }
-            return rawColor.GetColor();
+            return ColorTranslator.FromWin32((int)colorref);
         }
 
         /// <summary>
@@ -146,7 +153,8 @@ namespace IDesktopWallpaperWrapper
         /// <param name="color">The desktop background color.</param>
         public void SetBackgroundColor(Color color)
         {
-            wallpaperEngine.SetBackgroundColor(new COLORREF(color));
+            uint colorref = (uint)ColorTranslator.ToWin32(color);
+            wallpaperEngine.SetBackgroundColor(colorref);
         }
 
         /// <summary>
@@ -167,6 +175,7 @@ namespace IDesktopWallpaperWrapper
         /// <param name="monitorID">The ID of the monitor. This value can be obtained through GetMonitorDevicePathAt. Set this value to null to set the wallpaper image on all monitors.</param>
         /// <param name="wallpaper">The full path of the wallpaper image file.</param>
         /// <exception cref="ArgumentException">The ID supplied in monitorID cannot be found.</exception>
+        /// <exception cref="ArgumentException">The wallpaper path does not point to a valid image file.</exception>
         /// <exception cref="COMException">Code S_FALSE is thrown when trying to access a monitor not currently attached to the system.</exception>
         public void SetWallpaper(string monitorID, string wallpaper)
         {
@@ -217,7 +226,7 @@ namespace IDesktopWallpaperWrapper
         public string[] GetSlideshow()
         {
             IShellItemArray slideshows = wallpaperEngine.GetSlideshow();
-            return Win32.Utils.ParseIShellItemArray(slideshows, SIGDN.FILESYSPATH);
+            return Win32Utils.ParseIShellItemArray(slideshows, SIGDN.FILESYSPATH);
         }
 
         /// <summary>
@@ -253,12 +262,12 @@ namespace IDesktopWallpaperWrapper
         /// Specifies the images to use for the desktop wallpaper slideshow.
         /// </summary>
         /// <param name="directory">The full path to the directory containing the slideshow images.</param>
-        /// <exception cref="System.IO.FileNotFoundException">If the provided slideshow </exception>
+        /// <exception cref="System.IO.FileNotFoundException">If the provided slideshow folder is invalid.</exception>
         public void SetSlideshow(string directory)
         {
             // possible exceptions: not a valid path format, not an existing folder
             directory = System.IO.Path.GetFullPath(directory);
-            wallpaperEngine.SetSlideshow(Win32.Utils.CreateIShellItemArray(directory));
+            wallpaperEngine.SetSlideshow(Win32.Win32Utils.CreateIShellItemArray(directory));
         }
 
         /// <summary>
@@ -289,7 +298,7 @@ namespace IDesktopWallpaperWrapper
         /// Obtains the monitor IDs of all monitors currently online.
         /// </summary>
         /// <returns>A string array containing the IDs of all active monitors.</returns>
-        public string[] GetActiveMonitorsID()
+        public string[] GetActiveMonitorIDs()
         {
             uint monitorPathCount = GetMonitorDevicePathCount();
             List<string> results = new List<string>((int)monitorPathCount);
@@ -307,6 +316,33 @@ namespace IDesktopWallpaperWrapper
                 }
             }
             return results.ToArray();
+        }
+
+        /// <summary>
+        /// Gets the path to the directory in which the active slideshow images are stored.
+        /// </summary>
+        /// <returns>The path to the active slideshow, or <c>null</c> if no slideshow is configured.</returns>
+        public string GetSlideshowFolder()
+        {
+            if (!GetSlideshowStatus().HasFlag(DESKTOP_SLIDESHOW_STATE.DSS_SLIDESHOW))
+            {
+                return null;
+            }
+
+            string[] slideshowItems = GetSlideshow();
+
+            if (slideshowItems.Length == 0)
+            {
+                return null;
+            }
+            else if (Win32Utils.IsDirectoryPath(slideshowItems[0]))
+            {
+                return slideshowItems[0];
+            }
+            else
+            {
+                return System.IO.Path.GetDirectoryName(slideshowItems[0]);
+            }
         }
 
         #endregion

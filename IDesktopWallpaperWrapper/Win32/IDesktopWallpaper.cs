@@ -8,6 +8,7 @@ namespace IDesktopWallpaperWrapper.Win32
     /// <summary>
     /// The direction that the slideshow should advance.
     /// </summary>
+    [ComVisible(true)]
     public enum DESKTOP_SLIDESHOW_DIRECTION
     {
         /// <summary>
@@ -25,6 +26,7 @@ namespace IDesktopWallpaperWrapper.Win32
     /// <summary>
     /// Specifies how the desktop wallpaper should be displayed.
     /// </summary>
+    [ComVisible(true)]
     public enum DESKTOP_WALLPAPER_POSITION
     {
         /// <summary>
@@ -56,6 +58,7 @@ namespace IDesktopWallpaperWrapper.Win32
 
 
 
+    [ComVisible(true)]
     [Flags]
     public enum DESKTOP_SLIDESHOW_STATE
     {
@@ -108,10 +111,10 @@ namespace IDesktopWallpaperWrapper.Win32
         RECT GetMonitorRECT([MarshalAs(UnmanagedType.LPWStr)] string monitorID);
 
         //[MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-        void SetBackgroundColor([MarshalAs(UnmanagedType.U4)] COLORREF color);
+        void SetBackgroundColor(uint color);
 
         //[MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-        COLORREF GetBackgroundColor();
+        uint GetBackgroundColor();
 
         //[MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
         void SetPosition([MarshalAs(UnmanagedType.I4)] DESKTOP_WALLPAPER_POSITION position);
