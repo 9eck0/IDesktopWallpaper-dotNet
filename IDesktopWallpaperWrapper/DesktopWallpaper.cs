@@ -6,6 +6,10 @@ using System.Runtime.InteropServices;
 
 namespace IDesktopWallpaperWrapper
 {
+    /// <summary>
+    /// A wrapper object around the implementation coclass of Shobjidl_core::IDesktopWallpaper COM interface.
+    /// </summary>
+    /// <seealso href="https://docs.microsoft.com/en-us/windows/win32/api/shobjidl_core/nn-shobjidl_core-idesktopwallpaper"/>
     [ComVisible(true)]
     public class DesktopWallpaper
     {
@@ -314,6 +318,25 @@ namespace IDesktopWallpaperWrapper
                 {
                     // This monitor is currently offline
                 }
+            }
+            return results.ToArray();
+        }
+
+        /// <summary>
+        /// Obtains the monitor IDs of all monitors saved in the system.
+        /// </summary>
+        /// <returns>A string array containing the IDs of all saved monitors.</returns>
+        /// <remarks>
+        /// To obtain all monitors that are online, see <see cref="GetActiveMonitorIDs"/>.
+        /// </remarks>
+        public string[] GetAllMonitorIDs()
+        {
+            uint monitorPathCount = GetMonitorDevicePathCount();
+            List<string> results = new List<string>((int)monitorPathCount);
+            for (uint i = 0; i < monitorPathCount; i++)
+            {
+                string monitorID = GetMonitorDevicePathAt(i);
+                results.Add(monitorID);
             }
             return results.ToArray();
         }
