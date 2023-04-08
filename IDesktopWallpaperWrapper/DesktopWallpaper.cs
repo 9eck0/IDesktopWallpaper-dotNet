@@ -281,7 +281,7 @@ namespace IDesktopWallpaperWrapper
         public void SetSlideshowShuffle(bool enable)
         {
             wallpaperEngine.GetSlideshowOptions(out uint _, out uint currentInterval);
-            wallpaperEngine.SetSlideshowOptions(1, currentInterval);
+            wallpaperEngine.SetSlideshowOptions(enable ? 1u : 0u, currentInterval);
         }
 
         /// <summary>
