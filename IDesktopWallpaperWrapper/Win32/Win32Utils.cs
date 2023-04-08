@@ -81,7 +81,7 @@ namespace IDesktopWallpaperWrapper.Win32
         public static bool IsDirectoryPath(string path)
         {
             // get the file attributes for file or directory
-            FileAttributes attr = File.GetAttributes(@"c:\Temp");
+            FileAttributes attr = File.GetAttributes(path);
 
             return attr.HasFlag(FileAttributes.Directory);
         }
