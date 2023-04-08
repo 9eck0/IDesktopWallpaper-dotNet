@@ -57,5 +57,18 @@ namespace IDesktopWallpaperWrapper.Tests
             dw.SetSlideshowShuffle(!initialShuffle);
             dw.SetSlideshowShuffle(initialShuffle);
         }
+
+        [TestMethod()]
+        public void GetSlideshowFolderTest()
+        {
+            var dw = GetInterface();
+            if (dw.GetSlideshowStatus() == DESKTOP_SLIDESHOW_STATE.DSS_SLIDESHOW)
+            {
+                dw.GetSlideshowFolder();
+            }
+            else {
+                Assert.IsNull(dw.GetSlideshowFolder());
+            }
+        }
     }
 }
