@@ -14,7 +14,7 @@ namespace IDesktopWallpaperWrapper
     public class DesktopWallpaper
     {
         private Guid IDesktopWallpaperCoclassClsID = new Guid("c2cf3110-460e-4fc1-b9d0-8a1c0c9cc4bd");
-        private IDesktopWallpaper wallpaperEngine;
+        private readonly IDesktopWallpaper wallpaperEngine;
 
         /// <summary>
         /// Instantiates the Windows desktop wallpaper engine.
@@ -271,7 +271,7 @@ namespace IDesktopWallpaperWrapper
         {
             // possible exceptions: not a valid path format, not an existing folder
             directory = System.IO.Path.GetFullPath(directory);
-            wallpaperEngine.SetSlideshow(Win32.Win32Utils.CreateIShellItemArray(directory));
+            wallpaperEngine.SetSlideshow(Win32Utils.CreateIShellItemArray(directory));
         }
 
         /// <summary>
